@@ -5,12 +5,13 @@ void	invalid_map(t_info *info, char *str)
 	int	i;
 
 	i = 0;
-	while (info->map[i])
+	while (info->map && info->map[i])
 	{
 		free(info->map[i]);
 		i++;
 	}
-	free (info->map);
+	if (info->map)
+		free (info->map);
 	free (info);
 	write(2, str, ft_strlen(str));
 	write(2, "Invalid\n", 9);
@@ -49,6 +50,12 @@ void	check_line(char *line, t_info *info)
 			if (is_valid(*line) == 0 && *line != 10)
 				invalid_map(info, "Wrong character: ");
 		}
+		if (*line == 'P')
+			info->player += 1;
+		else if (*line == 'E')
+			info->exit += 1;
+		else if (*line == 'C')
+			info->collectibles += 1;
 		line++;
 	}
 }
@@ -62,10 +69,11 @@ void	last_line(t_info *info)
 	while (info->map[i])
 		i++;
 	last_line = info->map[i - 1];
-	while (*last_line)
+	i = 0;
+	while (last_line[i])
 	{
-		if (*last_line != '1' && *last_line != 10)
+		if (last_line[i] != '1' && last_line[i] != 10)
 			invalid_map(info, "Map not closed: ");
-		last_line++;
+		i++;
 	}
 }

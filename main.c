@@ -1,8 +1,16 @@
 #include "so_long.h"
 
+void	set_info(t_info *info)
+{
+	info->map_height = 0;
+	info->player = 0;
+	info->exit = 0;
+	info->collectibles = 0;
+}
+
 int	main(int ac, char** av)
 {
-	static t_info* info;
+	t_info* info;
 
 	if (ac < 2)
 	{
@@ -15,5 +23,6 @@ int	main(int ac, char** av)
 		return (1);
 	}
 	info = malloc (sizeof(t_info));
+	set_info(info);
 	create_map(av[1], info);
 }

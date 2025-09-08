@@ -13,6 +13,9 @@ typedef struct s_info
 	int				map_height;
 	int				map_width;
 	char**			map;
+	int				collectibles;
+	int				player;
+	int				exit;
 }				t_info;
 
 void	ft_arrayjoin(char **s1, char *s2);

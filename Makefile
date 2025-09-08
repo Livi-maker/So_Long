@@ -8,15 +8,14 @@ CC = cc
 
 CFLAGS = -Wall -Wextra -Werror -g
 
-INCLUDE = -Ilibft -Iminilibx-linux  -I/usr/include
+INCLUDE = -Ilibft -I/usr/include
 
-LIBFLAGS = -Lminilibx-linux -lmlx -Llibft -lft -L/usr/lib -lXext -lX11 -lm -lz
+LIBFLAGS = -Llibft -lft -L/usr/lib
 
 all: $(NAME)
 
 $(NAME): $(MY_OBJECTS)
 	make -C libft
-	make -C minilibx-linux
 	$(CC) $(MY_OBJECTS) $(LIBFLAGS) -o $(NAME)
 
 %.o: %.c
@@ -25,7 +24,6 @@ $(NAME): $(MY_OBJECTS)
 clean:
 	rm -f $(MY_OBJECTS)
 	make clean -C libft
-	make clean -C minilibx-linux
 
 fclean:
 	rm -f $(MY_OBJECTS) $(NAME)

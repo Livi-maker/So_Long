@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_data.c                                         :+:      :+:    :+:   */
+/*   create_map.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldei-sva <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 19:24:39 by ldei-sva          #+#    #+#             */
-/*   Updated: 2025/02/25 19:24:41 by ldei-sva         ###   ########.fr       */
+/*   Updated: 2025/09/09 01:54:07 by ldei-sva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,11 @@ void	get_map(int fd, t_info* info)
 {
 	char	*line;
 
-	info->map_height = 0;
-	line = get_next_line(fd);
-	info->map_width = ft_strlen(line);
 	info->map = calloc(1, sizeof(char *));
+	line = get_next_line(fd);
+	if (!line)
+		invalid_map(info, "No map found: ");
+	info->map_width = ft_strlen(line);
 	while (line)
 	{
 		info->map_height += 1;
@@ -28,6 +29,58 @@ void	get_map(int fd, t_info* info)
 		line = get_next_line(fd);
 	}
 	last_line(info);
+	if (info->player != 1 || info->exit != 1)
+		invalid_map(info, "Missing player or exit: ");
+}
+
+void	flood_fill(int x, int y, char **map, t_info *info)
+{
+	if (x < 0 || x == info->map_width || y < 0 || y == info->map_height || map[y][x] == '1')
+		return ;
+	if (map[y][x] == 'E')
+	{
+		map[y][x] = '1';
+		info->exit -= 1;
+		return ;
+	}
+	if (map[y][x] == 'P')
+	{
+		map[y][x] = '0';
+		info->player -= 1;
+	}
+	if (map[y][x] == 'C')
+	{
+		map[y][x] = '0';
+		info->collectibles -= 1;
+	}
+	flood_fill(x + 1, y, map, info);
+	flood_fill(x - 1, y, map, info);
+	flood_fill(x, y + 1, map, info);
+	flood_fill(x, y - 1, map, info);
+}
+
+void    find_player(t_info *info)
+{
+	char **map;
+	int x;
+	int y;
+
+	map = info->map;
+	y = 0;
+	while (map[y])
+	{
+		x = 0;
+		while (map[y][x])
+		{
+			if (map[y][x] == 'P')
+			{
+				flood_fill(x, y, info->map, info);
+				return ;
+			}
+			x++;
+		}
+		y++;
+	}
 }
 
 void create_map(char *file, t_info *info)
@@ -42,4 +95,7 @@ void create_map(char *file, t_info *info)
 	}
 	get_map(fd, info);
 	close(fd);
+	find_player(info);
+	if (info->collectibles != 0 || info->exit != 0 || info->player != 0)
+		invalid_map(info, "Map not accesible: ");
 }
