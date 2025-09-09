@@ -6,11 +6,23 @@
 /*   By: ldei-sva <ldei-sva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 13:10:19 by ldei-sva          #+#    #+#             */
-/*   Updated: 2025/09/08 23:41:37 by ldei-sva         ###   ########.fr       */
+/*   Updated: 2025/09/09 07:26:59 by ldei-sva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
+
+void	print_array(char **array)
+{
+	int	i;
+
+	i = 0;
+	while (array[i])
+	{
+		printf("%s\n", array[i]);
+		i++;
+	}
+}
 
 int		array_len(char **s1)
 {
@@ -22,7 +34,7 @@ int		array_len(char **s1)
 	return (i);
 }
 
-void	ft_arrayjoin(char **s1, char *s2)
+char**	ft_arrayjoin(char **s1, char *s2)
 {
 	int		len;
 	char	**result;
@@ -37,6 +49,5 @@ void	ft_arrayjoin(char **s1, char *s2)
 	}
 	result[len] = s2;
 	result[len + 1] = NULL;
-	*s1 = *result;
-	free(result);
+	return (result);
 }

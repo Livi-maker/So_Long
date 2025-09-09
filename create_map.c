@@ -6,7 +6,7 @@
 /*   By: ldei-sva <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 19:24:39 by ldei-sva          #+#    #+#             */
-/*   Updated: 2025/09/09 01:54:07 by ldei-sva         ###   ########.fr       */
+/*   Updated: 2025/09/09 07:35:09 by ldei-sva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	get_map(int fd, t_info* info)
 	{
 		info->map_height += 1;
 		check_line(line, info);
-		ft_arrayjoin(info->map, line);
+		info->map = ft_arrayjoin(info->map, line);
 		line = get_next_line(fd);
 	}
 	last_line(info);
@@ -35,24 +35,25 @@ void	get_map(int fd, t_info* info)
 
 void	flood_fill(int x, int y, char **map, t_info *info)
 {
-	if (x < 0 || x == info->map_width || y < 0 || y == info->map_height || map[y][x] == '1')
+	if (x < 0 || x == info->map_width - 1 || y < 0 || y == info->map_height - 1 || map[y][x] == '1' || map[y][x] == 'F')
 		return ;
 	if (map[y][x] == 'E')
 	{
-		map[y][x] = '1';
+		map[y][x] = 'F';
 		info->exit -= 1;
 		return ;
 	}
-	if (map[y][x] == 'P')
+	else if (map[y][x] == 'P')
 	{
-		map[y][x] = '0';
+		map[y][x] = 'F';
 		info->player -= 1;
 	}
-	if (map[y][x] == 'C')
+	else if (map[y][x] == 'C')
 	{
-		map[y][x] = '0';
+		map[y][x] = 'F';
 		info->collectibles -= 1;
 	}
+	map[y][x] = 'F';
 	flood_fill(x + 1, y, map, info);
 	flood_fill(x - 1, y, map, info);
 	flood_fill(x, y + 1, map, info);
